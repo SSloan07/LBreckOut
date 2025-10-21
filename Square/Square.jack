@@ -65,7 +65,7 @@ class Square {
    
 
    
-
+   //Erasing some zombi code
    /** Moves the square left by 2 pixels (if possible). */
    method void moveLeft() {
       if (x > 1) {
