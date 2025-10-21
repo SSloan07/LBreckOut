@@ -91,7 +91,7 @@ class Square {
    method void moveLeft() {
       if (x > 1) {
          do Screen.setColor(false);
-         do Screen.drawRectangle((x + size) - 1, y, x + size, y + (size/2));
+         do Screen.drawRectangle(x + size - 1, y, x + size, y + (size/2));
          let x = x - 2;
          do Screen.setColor(true);
          do Screen.drawRectangle(x, y, x + 1, y + (size/2));
@@ -100,15 +100,16 @@ class Square {
    }
 
    /** Moves the square right by 2 pixels (if possible). */
+   
    method void moveRight() {
       if ((x + size) < 510) {
          do Screen.setColor(false);
-         do Screen.drawRectangle((x + size) + 1, y, x + size, y + (size/2));
-         //do Screen.drawRectangle(x, y, x + size, y + (size/2));
+         do Screen.drawRectangle(x, y, x + 1, y + (size/2));
          let x = x + 2;
          do Screen.setColor(true);
-         do Screen.drawRectangle((x + size) - 1, y, x + size, y + (size)/2);
+         do Screen.drawRectangle((x + size) - 1, y, x + size, y + (size/2));
       }
       return;
    }
+
 }
