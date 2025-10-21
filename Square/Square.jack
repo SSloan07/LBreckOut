@@ -29,7 +29,7 @@ class Square {
    method void draw() {
       // Draws the square using the color black
       do Screen.setColor(true);
-      do Screen.drawRectangle(x, y, x + size, y + size);
+      do Screen.drawRectangle(x, y, x + size, y + (size/2));
       return;
    }
 
@@ -91,10 +91,10 @@ class Square {
    method void moveLeft() {
       if (x > 1) {
          do Screen.setColor(false);
-         do Screen.drawRectangle((x + size) - 1, y, x + size, y + size);
+         do Screen.drawRectangle((x + size) - 1, y, x + size, y + (size/2));
          let x = x - 2;
          do Screen.setColor(true);
-         do Screen.drawRectangle(x, y, x + 1, y + size);
+         do Screen.drawRectangle(x, y, x + 1, y + (size/2));
       }
       return;
    }
@@ -103,10 +103,11 @@ class Square {
    method void moveRight() {
       if ((x + size) < 510) {
          do Screen.setColor(false);
-         do Screen.drawRectangle(x, y, x + 1, y + size);
+         do Screen.drawRectangle((x + size) + 1, y, x + size, y + (size/2));
+         //do Screen.drawRectangle(x, y, x + size, y + (size/2));
          let x = x + 2;
          do Screen.setColor(true);
-         do Screen.drawRectangle((x + size) - 1, y, x + size, y + size);
+         do Screen.drawRectangle((x + size) - 1, y, x + size, y + (size)/2);
       }
       return;
    }
