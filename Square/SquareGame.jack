@@ -41,6 +41,7 @@ class SquareGame {
       do Sys.wait(5);  // delays the next movement
       return;  
    }
+   //A small change for testing
 
    /** Runs the game: handles the user's inputs and moves the square accordingly */
    method void run() {
