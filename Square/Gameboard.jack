@@ -1,0 +1,49 @@
+class Gameboard {
+    field Square topWall, leftWall, rightWall;
+    field int screenWidth, screenHeight, type;
+    
+    constructor Gameboard new(int width, int height) {
+        let screenWidth = width;
+        let screenHeight = height;
+        
+        // Adjust coordenates to be inside of 0-511, 0-255
+        let topWall = Square.new(0, 0, 1);
+        let leftWall = Square.new(0, 0, 1);
+        let rightWall = Square.new(width - 11, 0, 1);   // 502 for width=512
+        let type = 1; //This will help us on colitions
+        
+        return this;
+    }
+    
+    method void dispose() {
+        do topWall.dispose();
+        do bottomWall.dispose();
+        do leftWall.dispose();
+        do rightWall.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+    
+    method void draw() {
+        // Adjust dimentions for been on screen
+        var int adjustedWidth
+        
+        // top wall - height 10px
+        let adjustedWidth = screenWidth - 1;  // 511 instead of  512
+        do topWall.drawWall(adjustedWidth, 10);
+        do Sys.wait(1000);
+        
+
+
+        // left wall - width 10px
+        let adjustedHeight = screenHeight - 1; // 255 instead of 256
+        do leftWall.drawWall(10, adjustedHeight);
+        do Sys.wait(1000);
+
+        // right wall - width 10px, 
+        do rightWall.drawWall(10, adjustedHeight);
+        do Sys.wait(1000);
+
+        return;
+    }
+}
