@@ -53,80 +53,68 @@ class SquareGame {
 
    /** Runs the game: handles the user's inputs and moves the square accordingly */
    method void run() {
-      var char key;  // the key currently pressed by the user
+      var char key;
       var boolean exit;
       var boolean ballLost;
-      var int lives ;
-      var int counterObstacles; 
-      let lives = 3;  
+      var int lives;
+      var boolean lose; 
+      let lives = 3;
       let exit = false;
       
       while (~exit) {
-         // waits for a key to be pressed
-         while (key = 0) {
-            let key = Keyboard.keyPressed();
-            do moveSquare();
-            do ball.move();
-            let ballLost = board.checkBallCollisions(ball, square);
-            let counterObstacles = board.checkObstacleCollisions(ball); 
-            if (ballLost) {
+         let key = Keyboard.keyPressed();  // Read key once per frame
+         
+         // Process game logic
+         do moveSquare();
+         do ball.move();
+         let ballLost = board.checkBallCollisions(ball, square);
+         
+         // Handle ball loss
+         if (ballLost) {
                do ball.erase();
                let ball = Ball.new(100, 100, 10);
                do ball.draw();
-               let lives = lives - 1; 
-               if (lives = -1){
-                  
+               let lives = lives - 1;
+               
+               // Check for game over
+               if (lives < 0) {
                   do Output.printString("Perdiste!!");
-                  let exit = true; 
-                  let key = 0; 
-                  return; 
+                  let lose = true; 
+                  let exit = true;
                }
-               if (counterObstacles = 0 ){
-                  do Output.printString("Ganaste"); 
-               }
-               do Output.printString(" ");
-               do Output.moveCursor(0, 0); 
+               
+               // Update lives display
+               do Output.moveCursor(0, 0);
+               do Output.printString("   ");  // Clear previous
+               do Output.moveCursor(0, 0);
                do Output.printInt(lives);
-            }
          }
-         if (key = 81)  { let exit = true; }     // q key
+         
+         // Check for win condition
+         if (board.getNumerObstacle() = 0) {
+               do Output.printString("Ganaste!!");
+               let lose = false; 
+               let exit = true;
+         }
+         
+         // Handle input
+         if (key = 81)  { let exit = true; }     // q key - quit
          if (key = 90)  { do square.decSize(); } // z key
          if (key = 88)  { do square.incSize(); } // x key
          if (key = 130) { let direction = 3; }   // left arrow
          if (key = 132) { let direction = 4; }   // right arrow
-
-         // waits for the key to be released
-         while (~(key = 0)) {
-            let key = Keyboard.keyPressed();
-            do moveSquare();
-            do ball.move();
-            let ballLost = board.checkBallCollisions(ball, square);
-            let counterObstacles = board.checkObstacleCollisions(ball); 
-            if (ballLost) {
-               let key = 0;
-               do ball.erase();
-               let ball = Ball.new(100, 100, 10);
-               do ball.draw();
-               
-               let lives = lives - 1; 
-               if (lives = -1){
-                  do Output.printString("Perdiste!!");
-                  let exit = true; 
-                  let key = 0; 
-                  return;
-               }
-               if (counterObstacles = 0){
-                  do Output.printString("Ganaste");
-               }
-               do Output.printInt(lives);
-            } 
-               
-               
-            
-         }
-
-     } // while
-     return;
+         
+         
+         
+      } // while exit
+      
+      // Game over cleanup
+      do Output.moveCursor(10, 10);
+      if (lose){
+         do Output.printString("Game Over");
+      }
+      
+      return;
    }
 }
 

@@ -2,6 +2,7 @@ class Gameboard {
     field Square topWall, leftWall, rightWall;
     field int screenWidth, screenHeight, type;
     field Array obstacles;
+    field int activeObstacles; 
     field int obstacleCount;
     
     constructor Gameboard new(int width, int height) {
@@ -19,6 +20,7 @@ class Gameboard {
         let obstacleCount = 12;
         let obstacles = Array.new(obstacleCount);
         do createObstacles();
+        let activeObstacles = 12; 
         return this;
     }
     
@@ -81,7 +83,7 @@ class Gameboard {
     method boolean checkBallCollisions(Ball ball, Square paddle) {
         var int ballLeft, ballRight, ballTop, ballBottom;
         var int paddleLeft, paddleRight, paddleTop, paddleBottom;
-        var int fakeCounter; 
+
         
         let ballLeft = ball.getLeft();
         let ballRight = ball.getRight();
@@ -105,7 +107,7 @@ class Gameboard {
             }
         }
 
-        let fakeCounter =  checkObstacleCollisions(ball);
+        do checkObstacleCollisions(ball);
         
         // Collitions with top wall
         if (~(ballTop > 10)) {
@@ -129,8 +131,11 @@ class Gameboard {
         
         return false;
     }
+    method int getNumerObstacle (){
+        return activeObstacles; 
+    }
 
-    method int checkObstacleCollisions(Ball ball) {
+    method void checkObstacleCollisions(Ball ball) {
         var int i;
         var boolean isActive; 
         var int obsLeft, obsRight, obsTop, obsBottom;
@@ -166,7 +171,7 @@ class Gameboard {
                             if (ballLeft < obsRight) {
                                 // Destroy obstacle and bounce
                                 do currentObstacle.destroy();
-                                let counter = counter -1; 
+                                let activeObstacles = activeObstacles - 1; 
                                 do ball.bounceY();
                             }
                         }
@@ -175,6 +180,6 @@ class Gameboard {
             }
             let i = i + 1;
         }
-        return counter;
+        return;
     }
 }
