@@ -1,6 +1,8 @@
 class Gameboard {
     field Square topWall, leftWall, rightWall;
     field int screenWidth, screenHeight, type;
+    field Array obstacles;
+    field int obstacleCount;
     
     constructor Gameboard new(int width, int height) {
         let screenWidth = width;
@@ -11,7 +13,12 @@ class Gameboard {
         let leftWall = Square.new(0, 0, 1, 1 );
         let rightWall = Square.new(width - 11, 0, 1, 1);   // 502 for width=512
         let type = 1; //This will help us on colitions
-        
+
+        // Create obstacles 
+
+        let obstacleCount = 12;
+        let obstacles = Array.new(obstacleCount);
+        do createObstacles();
         return this;
     }
     
@@ -21,6 +28,30 @@ class Gameboard {
         do leftWall.dispose();
         do rightWall.dispose();
         do Memory.deAlloc(this);
+        return;
+    }
+
+    method void createObstacles() {
+        var int i, j, x, y, index;
+        let i = 0;
+        let j = 0;
+        let y = 50; // Initial row
+        
+        // 3 rows of 4 obstacles
+        while (j < 3) {
+            let i = 0;
+            let x = 80; // Initial column 
+            
+            while (i < 4) {
+                let index = (j * 4) + i;
+                let obstacles[index] = Obstacle.new(x, y, 8);
+                let x = x + 100; // space between obstacles
+                let i = i + 1;
+            }
+            
+            let y = y + 30; // space between rows
+            let j = j + 1;
+        }
         return;
     }
     
@@ -73,6 +104,8 @@ class Gameboard {
                 }
             }
         }
+
+        do checkObstacleCollisions(ball);
         
         // Collitions with top wall
         if (~(ballTop > 10)) {
@@ -95,5 +128,50 @@ class Gameboard {
         }
         
         return false;
+    }
+
+    method void checkObstacleCollisions(Ball ball) {
+        var int i;
+        var boolean isActive; 
+        var int obsLeft, obsRight, obsTop, obsBottom;
+        var int ballLeft, ballRight, ballTop, ballBottom;
+        var Obstacle currentObstacle;
+        var Square obstacleSquare;
+        
+        let i = 0;
+        
+        while (i < obstacleCount) {
+            let currentObstacle = obstacles[i];
+            let isActive = currentObstacle.isActive(); 
+            
+            if (isActive) {
+                let obstacleSquare = currentObstacle.getSquare();
+                
+                let ballLeft = ball.getLeft();
+                let ballRight = ball.getRight();
+                let ballTop = ball.getTop();
+                let ballBottom = ball.getBottom();
+                
+                let obsLeft = obstacleSquare.getX();
+                let obsRight = obstacleSquare.getX() + (obstacleSquare.getSize() * 4);
+                let obsTop = obstacleSquare.getY();
+                let obsBottom = obstacleSquare.getY() + (obstacleSquare.getSize() / 2);
+                
+                // Detect collisions with obstacle
+                if (ballBottom > obsTop) {
+                    if (ballTop < obsBottom) {
+                        if (ballRight > obsLeft) {
+                            if (ballLeft < obsRight) {
+                                // Destroy obstacle and bounce
+                                do currentObstacle.destroy();
+                                do ball.bounceY();
+                            }
+                        }
+                    }
+                }
+            }
+            let i = i + 1;
+        }
+        return;
     }
 }
