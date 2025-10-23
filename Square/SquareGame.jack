@@ -25,7 +25,7 @@ class SquareGame {
       // The initial square is located in (0,0), has size 30, and is not moving.
       let square = Square.new(255, 225, 30, 1);
       let board = Gameboard.new(512,256); 
-      let ball = Ball.new(250, 220, 10);  // x, y, size
+      let ball = Ball.new(100, 100, 10);  // x, y, size
       let direction = 0;
       do board.draw(); // Here we draw the board 
       do ball.draw(); // Here we draw the ball 
@@ -56,6 +56,9 @@ class SquareGame {
       var char key;  // the key currently pressed by the user
       var boolean exit;
       var boolean ballLost;
+      var int lives ;
+      var int counterObstacles; 
+      let lives = 3;  
       let exit = false;
       
       while (~exit) {
@@ -65,10 +68,25 @@ class SquareGame {
             do moveSquare();
             do ball.move();
             let ballLost = board.checkBallCollisions(ball, square);
+            let counterObstacles = board.checkObstacleCollisions(ball); 
             if (ballLost) {
-                do ball.erase();
-                let ball = Ball.new(100, 100, 10);
-                do ball.draw();
+               do ball.erase();
+               let ball = Ball.new(100, 100, 10);
+               do ball.draw();
+               let lives = lives - 1; 
+               if (lives = -1){
+                  
+                  do Output.printString("Perdiste!!");
+                  let exit = true; 
+                  let key = 0; 
+                  return; 
+               }
+               if (counterObstacles = 0 ){
+                  do Output.printString("Ganaste"); 
+               }
+               do Output.printString(" ");
+               do Output.moveCursor(0, 0); 
+               do Output.printInt(lives);
             }
          }
          if (key = 81)  { let exit = true; }     // q key
@@ -83,12 +101,30 @@ class SquareGame {
             do moveSquare();
             do ball.move();
             let ballLost = board.checkBallCollisions(ball, square);
+            let counterObstacles = board.checkObstacleCollisions(ball); 
             if (ballLost) {
-                do ball.erase();
-                let ball = Ball.new(100, 100, 10);
-                do ball.draw();
-            }
+               let key = 0;
+               do ball.erase();
+               let ball = Ball.new(100, 100, 10);
+               do ball.draw();
+               
+               let lives = lives - 1; 
+               if (lives = -1){
+                  do Output.printString("Perdiste!!");
+                  let exit = true; 
+                  let key = 0; 
+                  return;
+               }
+               if (counterObstacles = 0){
+                  do Output.printString("Ganaste");
+               }
+               do Output.printInt(lives);
+            } 
+               
+               
+            
          }
+
      } // while
      return;
    }

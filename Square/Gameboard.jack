@@ -24,7 +24,6 @@ class Gameboard {
     
     method void dispose() {
         do topWall.dispose();
-        do bottomWall.dispose();
         do leftWall.dispose();
         do rightWall.dispose();
         do Memory.deAlloc(this);
@@ -82,6 +81,7 @@ class Gameboard {
     method boolean checkBallCollisions(Ball ball, Square paddle) {
         var int ballLeft, ballRight, ballTop, ballBottom;
         var int paddleLeft, paddleRight, paddleTop, paddleBottom;
+        var int fakeCounter; 
         
         let ballLeft = ball.getLeft();
         let ballRight = ball.getRight();
@@ -105,7 +105,7 @@ class Gameboard {
             }
         }
 
-        do checkObstacleCollisions(ball);
+        let fakeCounter =  checkObstacleCollisions(ball);
         
         // Collitions with top wall
         if (~(ballTop > 10)) {
@@ -130,13 +130,15 @@ class Gameboard {
         return false;
     }
 
-    method void checkObstacleCollisions(Ball ball) {
+    method int checkObstacleCollisions(Ball ball) {
         var int i;
         var boolean isActive; 
         var int obsLeft, obsRight, obsTop, obsBottom;
         var int ballLeft, ballRight, ballTop, ballBottom;
         var Obstacle currentObstacle;
         var Square obstacleSquare;
+        var int counter; 
+        let counter = 12;
         
         let i = 0;
         
@@ -164,6 +166,7 @@ class Gameboard {
                             if (ballLeft < obsRight) {
                                 // Destroy obstacle and bounce
                                 do currentObstacle.destroy();
+                                let counter = counter -1; 
                                 do ball.bounceY();
                             }
                         }
@@ -172,6 +175,6 @@ class Gameboard {
             }
             let i = i + 1;
         }
-        return;
+        return counter;
     }
 }
