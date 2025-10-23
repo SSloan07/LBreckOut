@@ -9,14 +9,14 @@ class Square {
 
    field int x, y; // screen location of the top-left corner of this square
    field int size; // length of this square, in pixels
-   field int type; 
+   field int type; // 1=walls/base, 2=ball, 3=obstacles
    /** Constructs and draws a new square with a given location and size. */
-   constructor Square new(int ax, int ay, int asize) {
+   constructor Square new(int ax, int ay, int asize, int atype) {
       let x = ax;
       let y = ay;
       let size = asize;
       do draw();
-      let type = 1; 
+      let type = atype; 
       return this;
    }
 
@@ -26,13 +26,17 @@ class Square {
       return;
    }
 
-   /** Draws this square in its current (x,y) location */
+   /** Draws this base in its current (x,y) location */
    method void draw() {
       // Draws the square using the color black
       do Screen.setColor(true);
       do Screen.drawRectangle(x, y, x + (size*4), y + (size/2));
       return;
    }
+
+
+   
+
 
    /** Draws a wall with specific dimensions (ignores the size field) */
    method void drawWall(int width, int height) {
@@ -41,12 +45,12 @@ class Square {
       return;
    }
 
-   
+
    /** Erases this square. */
    method void erase() {
       // Draws the square using the color white (background color)
       do Screen.setColor(false);
-      do Screen.drawRectangle(x, y, x + size, y + size);
+      do Screen.drawRectangle(x, y, x + (size *4) , y + (size / 2));
       return;
    }
 
@@ -114,6 +118,15 @@ class Square {
    /** Returns the size */
    method int getSize() {
       return size;
+   }
+
+   method int getType() {
+        return type;
+   }
+    
+   method void setType(int newType) {
+      let type = newType;
+      return;
    }
 
 }

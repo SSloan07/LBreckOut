@@ -7,9 +7,9 @@ class Gameboard {
         let screenHeight = height;
         
         // Adjust coordenates to be inside of 0-511, 0-255
-        let topWall = Square.new(0, 0, 1);
-        let leftWall = Square.new(0, 0, 1);
-        let rightWall = Square.new(width - 11, 0, 1);   // 502 for width=512
+        let topWall = Square.new(0, 0, 1, 1);
+        let leftWall = Square.new(0, 0, 1, 1 );
+        let rightWall = Square.new(width - 11, 0, 1, 1);   // 502 for width=512
         let type = 1; //This will help us on colitions
         
         return this;
@@ -26,7 +26,8 @@ class Gameboard {
     
     method void draw() {
         // Adjust dimentions for been on screen
-        var int adjustedWidth
+        var int adjustedWidth;
+        var int adjustedHeight;
         
         // top wall - height 10px
         let adjustedWidth = screenWidth - 1;  // 511 instead of  512
@@ -45,5 +46,54 @@ class Gameboard {
         do Sys.wait(1000);
 
         return;
+    }
+
+    method boolean checkBallCollisions(Ball ball, Square paddle) {
+        var int ballLeft, ballRight, ballTop, ballBottom;
+        var int paddleLeft, paddleRight, paddleTop, paddleBottom;
+        
+        let ballLeft = ball.getLeft();
+        let ballRight = ball.getRight();
+        let ballTop = ball.getTop();
+        let ballBottom = ball.getBottom();
+        
+        let paddleLeft = paddle.getX();
+        let paddleRight = paddle.getX() + (paddle.getSize() * 4);
+        let paddleTop = paddle.getY();
+        let paddleBottom = paddle.getY() + (paddle.getSize() / 2);
+        
+        // Collisions with paddle 
+        if (~(ballBottom < paddleTop)) {
+            if (~(ballTop > paddleBottom)) {
+                if (~(ballRight < paddleLeft)) {
+                    if (~(ballLeft > paddleRight)) {
+                        do ball.bounceY();
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        // Collitions with top wall
+        if (~(ballTop > 10)) {
+            do ball.bounceY();
+        }
+        
+        // Collitions with left wall
+        if (~(ballLeft > 10)) {
+            do ball.bounceX();
+        }
+        
+        // CCollitions with right wall
+        if (~(ballRight < 500)) {
+            do ball.bounceX();
+        }
+        
+        // Lose Ball
+        if (~(ballBottom < 245)) {
+            return true;
+        }
+        
+        return false;
     }
 }

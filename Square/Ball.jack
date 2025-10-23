@@ -1,0 +1,68 @@
+class Ball {
+    field int x, y;
+    field int size;
+    field int type;
+    field int dx, dy;
+    field int speed; 
+
+    
+    constructor Ball new(int startX, int startY, int ballSize) {
+        let x = startX;
+        let y = startY;
+        let size = ballSize;
+        let type = 2;
+        let speed = 1; // Just Integer number
+        // Start with direction 315° (Right - Down)
+        let dx = 1 * speed;   //  Right
+        let dy = -1 * speed;  //  Down
+        return this;
+    }
+    
+    method void draw() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + size, y + size);
+        return;
+    }
+    
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + size, y + size);
+        return;
+    }
+    
+    method void move() {
+        do erase();
+        let x = x + dx;
+        let y = y + dy;
+        do draw();
+        return;
+    }
+    
+    // Top/bottom wall bounce - maintains 45° by switching only Y
+    method void bounceY() {
+        let dy = -dy;
+        return;
+    }
+    
+    // Bounce off side walls - maintains 45° by changing only X
+    method void bounceX() {
+        let dx = -dx;
+        return;
+    }
+    
+    method int getX() { return x; }
+    method int getY() { return y; }
+    method int getSize() { return size; }
+    method int getWidth() { return size; }
+    method int getHeight() { return size; }
+    method int getType() { return type; }
+    method int getLeft() { return x; }
+    method int getRight() { return x + size; }
+    method int getTop() { return y; }
+    method int getBottom() { return y + size; }
+    
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}
