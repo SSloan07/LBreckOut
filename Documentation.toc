@@ -1,0 +1,9 @@
+\babel@toc {nil}{}\relax 
+\contentsline {section}{\numberline {0.1}Introducción}{1}{}%
+\contentsline {section}{\numberline {0.2}Sobre el juego}{1}{}%
+\contentsline {section}{\numberline {0.3}Sobre el diseño general escogido}{1}{}%
+\contentsline {subsection}{\numberline {0.3.1}Square.jack}{2}{}%
+\contentsline {subsection}{\numberline {0.3.2}Ball.jack}{2}{}%
+\contentsline {subsubsection}{Movimiento básico}{2}{}%
+\contentsline {subsubsection}{Física del movimiento a 45°}{2}{}%
+\contentsline {subsubsection}{Sistema de rebotes}{3}{}%
