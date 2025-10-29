@@ -1,11 +1,11 @@
-\documentclass{report} 
+\documentclass[twocolumn]{article} 
 \usepackage[spanish]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{graphicx} % Para posibles imágenes/diagramas
+\usepackage{graphicx} %  imágenes/diagramas
 
 
 \lstdefinelanguage{jack}{
@@ -59,7 +59,7 @@
 	A continuación se explicará de manera un poco más precisa, cada uno de los documentos.
 	
 	\subsection{Square.jack}
-	Nuestro juego, al igual que la gran mayoría de los juegos retro usa la figura geométrica \emph{Cuadrado} como base. En esta línea de ideas, este archivo es bastante importante en nuestro juego, porque los otros documentos usarán sus funciones para ejecutar ciertas acciones como mostrar las paredes, los obstáculos e incluso la propia barra. Además en este archivo están las acciones fundamentales de movimiento de la barra con funciones como \emph{moveLeft} o \emph{moveRight}.  
+	Nuestro juego, al igual que la gran mayoría de los juegos retro usa la figura geométrica \emph{Cuadrado} como base. En esta línea de ideas, este archivo es bastante importante en nuestro juego, porque los otros documentos usarán sus funciones para ejecutar ciertas acciones como mostrar las paredes o incluso la propia barra. Además en este archivo están las acciones fundamentales de movimiento de la barra con funciones como \emph{moveLeft} o \emph{moveRight}.  
 	
 	\textbf{Consultar el archivo Square.jack para más detalle.}
 	
@@ -109,5 +109,254 @@
 	\end{lstlisting}
 	
 	Este diseño garantiza que la pelota siempre se mueva en diagonales de 45 grados, simplificando la física del juego mientras se mantiene un comportamiento predecible y jugable.
+	\subsection{Obstacle.jack}
+	Este archivo es el que le da proposito al juego, pues es el que se encarga, tanto de la generación de los obstaculos, como de su activación o desactivación, permitiendo por supuesto, pintarlos o no pintarlos (cabe aclarar, aunque este archivo no existe por si solo, si permite que el archivo Gameboard.jack haga la magia, gestionando así los metodos que este documento ofrece). Como metodos destacados tenemos \emph{draw()} y \emph{destroy()}. El primero es el que se encarga de pintar los obstaculos (si y solo si su atributo \textbf{active} es igual a \text{True}). Por otra parte, el segundo, \textbf{borra} los obstaculos solo si están \textbf{activos} y después de ejecutada esta acción, cambia el estado del atributo \textbf{active} a \textbf{false}. A continuación el codigo mencionado: 
+	\begin{lstlisting}[caption=Método draw de los obstaculos]
+	method void draw() {
+		if (active) {
+			do obstacle.draw();
+		}
+		return;
+	}
+	\end{lstlisting}
+	\begin{lstlisting}[caption=Método destroy de los obstaculos]
+		method void destroy() {
+			if (active) {
+				do erase();
+				let active = false;
+			}
+			return;
+		}
+	\end{lstlisting}
+	\subsection{Gameboard.jack}
+	Este archivo cumple un papel fundamental dentro del diseño general del juego, ya que actúa como el \textbf{núcleo del tablero de juego}. Es el encargado de inicializar los elementos visibles del entorno (paredes y obstáculos), gestionar las colisiones de la pelota con los distintos componentes y mantener el control sobre los elementos activos del juego. 
+	
+	A diferencia de los demás módulos, \texttt{Gameboard.jack} no solo administra objetos, sino que también ejecuta parte de la lógica central del juego, garantizando la coherencia espacial y la correcta interacción entre la pelota, la barra y los obstáculos.
+	
+	\subsubsection{Estructura general y atributos}
+	El archivo define la clase \texttt{Gameboard} con los siguientes campos principales:
+	
+	\begin{itemize}
+		\item \texttt{topWall}, \texttt{leftWall}, \texttt{rightWall}: objetos de tipo \texttt{Square} que representan las tres paredes visibles del tablero (superior, izquierda y derecha).
+		\item \texttt{screenWidth}, \texttt{screenHeight}: dimensiones del área visible del juego, normalmente $512 \times 256$ píxeles.
+		\item \texttt{obstacles}: arreglo que contiene todos los obstáculos del juego, creados en una disposición matricial.
+		\item \texttt{activeObstacles} y \texttt{obstacleCount}: contadores de obstáculos activos y del total inicial respectivamente.
+		\item \texttt{type}: valor auxiliar usado para determinar el tipo de colisión o interacción.
+	\end{itemize}
+	
+	Esta estructura permite mantener una representación lógica clara del entorno físico donde se desarrolla el juego.
+	
+	\subsubsection{Inicialización del tablero}
+	El constructor \texttt{new()} prepara todo el escenario. En primer lugar, ajusta las coordenadas de las paredes para adaptarse a los límites de la pantalla. Posteriormente, se crea el arreglo de obstáculos y se llama al método \texttt{createObstacles()} para distribuirlos ordenadamente.  
+	Finalmente, se define el número inicial de obstáculos activos y se retorna la instancia del tablero.
+	
+	\begin{lstlisting}[caption=Constructor del tablero de juego]
+		constructor Gameboard new(int width, int height) {
+			let screenWidth = width;
+			let screenHeight = height;
+			
+			// Inicialización de paredes
+			let topWall = Square.new(0, 0, 1, 1);
+			let leftWall = Square.new(0, 0, 1, 1);
+			let rightWall = Square.new(width - 11, 0, 1, 1);
+			
+			// Inicialización de obstáculos
+			let obstacleCount = 12;
+			let obstacles = Array.new(obstacleCount);
+			do createObstacles();
+			let activeObstacles = 12; 
+			return this;
+		}
+	\end{lstlisting}
+	
+	\subsubsection{Creación de obstáculos}
+	El método \texttt{createObstacles()} se encarga de generar la disposición inicial de los obstáculos en una cuadrícula de tres filas por cuatro columnas. Cada obstáculo se crea con una posición inicial $(x, y)$ que se actualiza dinámicamente a medida que avanza el ciclo anidado, garantizando un espaciado uniforme entre filas y columnas.
+	
+	\begin{lstlisting}[caption=Método de creación de obstáculos]
+		method void createObstacles() {
+			var int i, j, x, y, index;
+			let y = 50; // Fila inicial
+			
+			while (j < 3) {
+				let x = 80; // Columna inicial
+				while (i < 4) {
+					let index = (j * 4) + i;
+					let obstacles[index] = Obstacle.new(x, y, 8);
+					let x = x + 100; // Espacio entre obstáculos
+					let i = i + 1;
+				}
+				let y = y + 30; // Espacio entre filas
+				let j = j + 1;
+			}
+			return;
+		}
+	\end{lstlisting}
+	
+	Esta modularidad facilita escalar la dificultad del juego simplemente ajustando el número de filas, columnas o la separación entre los obstáculos.
+	
+	\subsubsection{Dibujo del tablero}
+	El método \texttt{draw()} se encarga de renderizar las paredes del juego. Dado que la pantalla tiene límites de 0–511 píxeles en el eje \textbf{x} y 0–255 en el eje \textbf{y}, se realizan pequeños ajustes para que las paredes queden perfectamente visibles dentro del área. Entre cada dibujo se incluye una pausa temporal mediante \texttt{Sys.wait()} para permitir una visualización progresiva.
+	
+	\begin{lstlisting}[caption=Método de dibujo del tablero]
+		method void draw() {
+			var int adjustedWidth, adjustedHeight;
+			let adjustedWidth = screenWidth - 1;
+			do topWall.drawWall(adjustedWidth, 10);
+			do Sys.wait(1000);
+			
+			let adjustedHeight = screenHeight - 1;
+			do leftWall.drawWall(10, adjustedHeight);
+			do Sys.wait(1000);
+			
+			do rightWall.drawWall(10, adjustedHeight);
+			do Sys.wait(1000);
+			return;
+		}
+	\end{lstlisting}
+	
+	\subsubsection{Sistema de colisiones}
+	El corazón de la jugabilidad se encuentra en el método \texttt{checkBallCollisions()}, que determina cuándo y cómo reacciona la pelota ante los distintos elementos del entorno.  
+	El método calcula los bordes de la pelota y de la barra, y evalúa superposiciones para determinar si ocurrió una colisión. En caso afirmativo, se invoca el rebote correspondiente. También se verifican los límites del tablero y la pérdida de la pelota.
+	
+	\begin{lstlisting}[caption=Verificación de colisiones principales]
+		method boolean checkBallCollisions(Ball ball, Square paddle) {
+			var int ballLeft, ballRight, ballTop, ballBottom;
+			var int paddleLeft, paddleRight, paddleTop, paddleBottom;
+			
+			// Coordenadas de la pelota y la barra
+			let ballLeft = ball.getLeft();
+			let ballRight = ball.getRight();
+			let ballTop = ball.getTop();
+			let ballBottom = ball.getBottom();
+			let paddleLeft = paddle.getX();
+			let paddleRight = paddle.getX() + (paddle.getSize() * 4);
+			let paddleTop = paddle.getY();
+			let paddleBottom = paddle.getY() + (paddle.getSize() / 2);
+			
+			// Colisiones con la barra
+			if (~(ballBottom < paddleTop)) {
+				if (~(ballTop > paddleBottom)) {
+					if (~(ballRight < paddleLeft)) {
+						if (~(ballLeft > paddleRight)) {
+							do ball.bounceY();
+							return false;
+						}
+					}
+				}
+			}
+			
+			// Colisiones con obstáculos y paredes
+			do checkObstacleCollisions(ball);
+			if (~(ballTop > 10)) { do ball.bounceY(); }
+			if (~(ballLeft > 10)) { do ball.bounceX(); }
+			if (~(ballRight < 500)) { do ball.bounceX(); }
+			
+			// Verificar si la pelota se perdió
+			if (~(ballBottom < 245)) {
+				return true;
+			}
+			
+			return false;
+		}
+	\end{lstlisting}
+	
+	\subsubsection{Gestión de colisiones con obstáculos}
+	Cuando la pelota impacta un obstáculo, se destruye visualmente y se reduce el contador de obstáculos activos. Este comportamiento se implementa en el método \texttt{checkObstacleCollisions()}, que recorre el arreglo de obstáculos y compara sus coordenadas con las de la pelota.
+	
+	\begin{lstlisting}[caption=Gestión de colisiones con los obstáculos]
+		method void checkObstacleCollisions(Ball ball) {
+			var int i;
+			var boolean isActive; 
+			var int obsLeft, obsRight, obsTop, obsBottom;
+			var int ballLeft, ballRight, ballTop, ballBottom;
+			var Obstacle currentObstacle;
+			var Square obstacleSquare;
+			
+			let i = 0;
+			while (i < obstacleCount) {
+				let currentObstacle = obstacles[i];
+				let isActive = currentObstacle.isActive(); 
+				
+				if (isActive) {
+					let obstacleSquare = currentObstacle.getSquare();
+					let ballLeft = ball.getLeft();
+					let ballRight = ball.getRight();
+					let ballTop = ball.getTop();
+					let ballBottom = ball.getBottom();
+					let obsLeft = obstacleSquare.getX();
+					let obsRight = obstacleSquare.getX() + (obstacleSquare.getSize() * 4);
+					let obsTop = obstacleSquare.getY();
+					let obsBottom = obstacleSquare.getY() + (obstacleSquare.getSize() / 2);
+					
+					if (ballBottom > obsTop) {
+						if (ballTop < obsBottom) {
+							if (ballRight > obsLeft) {
+								if (ballLeft < obsRight) {
+									do currentObstacle.destroy();
+									let activeObstacles = activeObstacles - 1; 
+									do ball.bounceY();
+								}
+							}
+						}
+					}
+				}
+				let i = i + 1;
+			}
+			return;
+		}
+	\end{lstlisting}
+	
+	Este método contribuye al dinamismo del juego, manteniendo la sensación de progreso y recompensa visual cada vez que el jugador destruye un bloque.
+	
+	\subsection{SquareGame.jack}
+	El archivo \texttt{SquareGame.jack} constituye el \textbf{controlador principal del juego}. Es el encargado de coordinar la interacción entre los distintos componentes del sistema: la pelota (\texttt{Ball}), el tablero (\texttt{Gameboard}) y la barra (\texttt{Square}). A diferencia de los demás módulos, su función no es representar un elemento del juego, sino gestionar la dinámica completa, desde la inicialización hasta el final de la partida.
+	
+	\subsubsection{Propósito y estructura}
+	La clase \texttt{SquareGame} implementa la lógica de ejecución general, manejando tanto el ciclo principal del juego como las entradas del usuario.  
+	Sus campos principales son:
+	
+	\begin{itemize}
+		\item \texttt{square}: representa la barra controlada por el jugador.
+		\item \texttt{board}: tablero donde se dibujan los elementos del juego.
+		\item \texttt{ball}: la pelota principal del juego.
+		\item \texttt{direction}: variable que indica la dirección actual del movimiento.
+	\end{itemize}
+	
+	Esta combinación de objetos refleja una arquitectura modular (lo que nos brinda escalabilidad): cada clase se ocupa de un aspecto visual o funcional concreto, mientras que \texttt{SquareGame} se limita a orquestar su interacción.
+	
+	\subsubsection{Inicialización del juego}
+	El constructor crea los objetos principales del juego: la barra, el tablero y la pelota. Luego llama al método \texttt{draw()} del tablero y de la pelota, presentando al jugador el estado inicial de la partida.  
+	En este punto, la dirección de movimiento se establece en cero, indicando que la barra aún no se mueve.
+	
+	\subsubsection{Gestión del movimiento}
+	El método \texttt{moveSquare()} permite desplazar la barra horizontalmente según la dirección registrada. Este método se ejecuta de forma continua dentro del ciclo principal, con un pequeño retardo temporal (\texttt{Sys.wait(5)}) para suavizar el movimiento.  
+	Se omiten los desplazamientos verticales, ya que en este juego la barra solo se mueve de izquierda a derecha.
+	
+	\subsubsection{Ciclo principal de ejecución}
+	La lógica principal se encuentra en el método \texttt{run()}, donde se gestionan los eventos, las colisiones y las condiciones de victoria o derrota.  
+	Durante cada iteración del bucle, se siguen los siguientes pasos:
+	
+	\begin{enumerate}
+		\item Se lee la tecla presionada por el usuario.
+		\item Se actualizan las posiciones de la barra y de la pelota.
+		\item Se verifica si la pelota colisionó con la barra, las paredes o los obstáculos mediante el método \texttt{checkBallCollisions()} del tablero.
+		\item Si la pelota se pierde, se reduce el contador de vidas y se redibuja una nueva pelota en la posición inicial.
+		\item Si el número de vidas llega a cero, se muestra el mensaje “\emph{Perdiste!!}” y el juego finaliza.
+		\item Si todos los obstáculos fueron destruidos, se declara la victoria mostrando “\emph{Ganaste!!}”.
+	\end{enumerate}
+	
+	\subsubsection{Interacción con el jugador}
+	El esquema de control mantiene una simplicidad clásica, propia de los juegos retro. Las teclas de flecha izquierda y derecha permiten mover la barra
+	
+	\subsubsection{Cierre del juego}
+	Cuando el jugador gana o pierde, el método finaliza mostrando un mensaje en pantalla y limpiando los recursos utilizados mediante el método \texttt{dispose()}, que libera tanto la memoria del tablero como la de los objetos gráficos.
+	\subsection{Main.jack}
+	Este documento refleja el esqueleto principal del programa, teniendo como premisa fundamental, la inicialización de una instancia de \textbf{SquareGame} y llamar el metodo \emph{run()} de este, de modo que cuando este finaliza su ejecución es porque el jugador o ganó o perdió, lo que naturalmente finaliza la ejecución del programa (después de limpiar la memoria con \emph{dispose()} por supuesto). 
+	
+	
+	
+	
+	
+	
 	
 \end{document}

@@ -1,9 +1,25 @@
 \babel@toc {nil}{}\relax 
-\contentsline {section}{\numberline {0.1}Introducción}{1}{}%
-\contentsline {section}{\numberline {0.2}Sobre el juego}{1}{}%
-\contentsline {section}{\numberline {0.3}Sobre el diseño general escogido}{1}{}%
-\contentsline {subsection}{\numberline {0.3.1}Square.jack}{2}{}%
-\contentsline {subsection}{\numberline {0.3.2}Ball.jack}{2}{}%
-\contentsline {subsubsection}{Movimiento básico}{2}{}%
-\contentsline {subsubsection}{Física del movimiento a 45°}{2}{}%
-\contentsline {subsubsection}{Sistema de rebotes}{3}{}%
+\contentsline {section}{\numberline {1}Introducción}{1}{}%
+\contentsline {section}{\numberline {2}Sobre el juego}{1}{}%
+\contentsline {section}{\numberline {3}Sobre el diseño general escogido}{1}{}%
+\contentsline {subsection}{\numberline {3.1}Square.jack}{2}{}%
+\contentsline {subsection}{\numberline {3.2}Ball.jack}{2}{}%
+\contentsline {subsubsection}{\numberline {3.2.1}Movimiento básico}{2}{}%
+\contentsline {subsubsection}{\numberline {3.2.2}Física del movimiento a 45°}{2}{}%
+\contentsline {subsubsection}{\numberline {3.2.3}Sistema de rebotes}{2}{}%
+\contentsline {subsection}{\numberline {3.3}Obstacle.jack}{2}{}%
+\contentsline {subsection}{\numberline {3.4}Gameboard.jack}{3}{}%
+\contentsline {subsubsection}{\numberline {3.4.1}Estructura general y atributos}{3}{}%
+\contentsline {subsubsection}{\numberline {3.4.2}Inicialización del tablero}{3}{}%
+\contentsline {subsubsection}{\numberline {3.4.3}Creación de obstáculos}{4}{}%
+\contentsline {subsubsection}{\numberline {3.4.4}Dibujo del tablero}{4}{}%
+\contentsline {subsubsection}{\numberline {3.4.5}Sistema de colisiones}{4}{}%
+\contentsline {subsubsection}{\numberline {3.4.6}Gestión de colisiones con obstáculos}{5}{}%
+\contentsline {subsection}{\numberline {3.5}SquareGame.jack}{5}{}%
+\contentsline {subsubsection}{\numberline {3.5.1}Propósito y estructura}{5}{}%
+\contentsline {subsubsection}{\numberline {3.5.2}Inicialización del juego}{6}{}%
+\contentsline {subsubsection}{\numberline {3.5.3}Gestión del movimiento}{6}{}%
+\contentsline {subsubsection}{\numberline {3.5.4}Ciclo principal de ejecución}{6}{}%
+\contentsline {subsubsection}{\numberline {3.5.5}Interacción con el jugador}{6}{}%
+\contentsline {subsubsection}{\numberline {3.5.6}Cierre del juego}{6}{}%
+\contentsline {subsection}{\numberline {3.6}Main.jack}{6}{}%
