@@ -1,1 +1,5 @@
 *.vm
+*.synctex.gz
+*.log
+*.aux
+*.toc
