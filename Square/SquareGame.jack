@@ -25,7 +25,7 @@ class SquareGame {
       // The initial square is located in (0,0), has size 30, and is not moving.
       let square = Square.new(255, 225, 30, 1);
       let board = Gameboard.new(512,256); 
-      let ball = Ball.new(100, 100, 10);  // x, y, size
+      let ball = Ball.new(256, 200, 10);  // x, y, size
       let direction = 0;
       do board.draw(); // Here we draw the board 
       do ball.draw(); // Here we draw the ball 
@@ -61,46 +61,50 @@ class SquareGame {
       let lives = 3;
       let exit = false;
       
+
+
       while (~exit) {
          let key = Keyboard.keyPressed();  // Read key once per frame
          
          // Process game logic
          do moveSquare();
          do ball.move();
+         do Output.moveCursor(0, 0);
+         do Output.printInt(lives);
          let ballLost = board.checkBallCollisions(ball, square);
          
          // Handle ball loss
          if (ballLost) {
                do ball.erase();
-               let ball = Ball.new(100, 100, 10);
+               let ball = Ball.new(256, 200, 10);
                do ball.draw();
                let lives = lives - 1;
                
                // Check for game over
-               if (lives < 0) {
-                  do Output.printString("Perdiste!!");
+               if (lives < 1) {
                   let lose = true; 
                   let exit = true;
                }
                
                // Update lives display
                do Output.moveCursor(0, 0);
-               do Output.printString("   ");  // Clear previous
+               do Output.printString(" ");  // Clear previous
                do Output.moveCursor(0, 0);
                do Output.printInt(lives);
          }
          
          // Check for win condition
          if (board.getNumerObstacle() = 0) {
-               do Output.printString("Ganaste!!");
                let lose = false; 
                let exit = true;
+               do Output.moveCursor( 16 , 32); 
+               do Output.printString("Ganaste!!");
+               do Output.moveCursor(0,0); 
+
          }
          
          // Handle input
          if (key = 81)  { let exit = true; }     // q key - quit
-         if (key = 90)  { do square.decSize(); } // z key
-         if (key = 88)  { do square.incSize(); } // x key
          if (key = 130) { let direction = 3; }   // left arrow
          if (key = 132) { let direction = 4; }   // right arrow
          
@@ -109,9 +113,10 @@ class SquareGame {
       } // while exit
       
       // Game over cleanup
-      do Output.moveCursor(10, 10);
       if (lose){
-         do Output.printString("Game Over");
+         do Output.moveCursor( 16 ,32); 
+         do Output.printString("Perdiste!!");
+         do Output.moveCursor(0,0); 
       }
       
       return;

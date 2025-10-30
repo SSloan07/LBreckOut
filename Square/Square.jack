@@ -54,33 +54,10 @@ class Square {
       return;
    }
 
-    /** Increments the square size by 2 pixels (if possible). */
-   method void incSize() {
-      if (((y + size) < 254) & ((x + size) < 510)) {
-         do erase();
-         let size = size + 2;
-         do draw();
-      }
-      return;
-   }
-
-   /** Decrements the square size by 2 pixels (if possible). */
-   method void decSize() {
-      if (size > 2) {
-         do erase();
-         let size = size - 2;
-         do draw();
-      }
-      return;
-   }
-
-   
-
-   
    //Erasing some zombi code
    /** Moves the square left by 2 pixels (if possible). */
    method void moveLeft() {
-      if (x > 1) {
+      if (x > 11) {
          
          do Screen.setColor(false); 
          do Screen.drawRectangle(x, y, x + (size * 4), y + (size/2));

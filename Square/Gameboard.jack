@@ -17,10 +17,10 @@ class Gameboard {
 
         // Create obstacles 
 
-        let obstacleCount = 12;
+        let obstacleCount = 32;
         let obstacles = Array.new(obstacleCount);
         do createObstacles();
-        let activeObstacles = 12; 
+        let activeObstacles = 32; 
         return this;
     }
     
@@ -36,18 +36,19 @@ class Gameboard {
         var int i, j, x, y, index;
         let i = 0;
         let j = 0;
+        let index = 0; 
         let y = 50; // Initial row
         
         // 3 rows of 4 obstacles
-        while (j < 3) {
+        while (j < 4) {
             let i = 0;
             let x = 80; // Initial column 
             
-            while (i < 4) {
-                let index = (j * 4) + i;
+            while (i < 8) {
                 let obstacles[index] = Obstacle.new(x, y, 8);
-                let x = x + 100; // space between obstacles
+                let x = x + 50; // space between obstacles
                 let i = i + 1;
+                let index = index + 1; 
             }
             
             let y = y + 30; // space between rows
@@ -110,12 +111,12 @@ class Gameboard {
         do checkObstacleCollisions(ball);
         
         // Collitions with top wall
-        if (~(ballTop > 10)) {
+        if (~(ballTop > 12)) {
             do ball.bounceY();
         }
         
         // Collitions with left wall
-        if (~(ballLeft > 10)) {
+        if (~(ballLeft > 12)) {
             do ball.bounceX();
         }
         
@@ -131,6 +132,7 @@ class Gameboard {
         
         return false;
     }
+
     method int getNumerObstacle (){
         return activeObstacles; 
     }
@@ -143,7 +145,7 @@ class Gameboard {
         var Obstacle currentObstacle;
         var Square obstacleSquare;
         var int counter; 
-        let counter = 12;
+        let counter = 32;
         
         let i = 0;
         
