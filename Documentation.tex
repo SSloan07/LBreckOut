@@ -41,6 +41,21 @@
 	
 	\section{Introducción}
 	En esta oportunidad estamos trabajando un juego retro clásico llamado \emph{LBreakOut2}, mediante el lenguaje de programación \emph{Jack} del programa educativo \emph{Nand2Tetris}, usando por supuesto el compilador correspondiente \emph{JackCompiler} para pasarlo a \emph{Aritmética de Stack} y luego ejecutarlo en \emph{VMSimulator}. En las próximas secciones se ahondará más sobre cada uno de los aspectos particulares tanto del juego, como su solución y por supuesto los aprendizajes adquiridos.
+	\section{Ejecución del juego}
+	A continuación se describen los pasos necesarios para ejecutar el juego desde la terminal en un sistema operativo Linux:
+	
+	\begin{enumerate}
+		\item Clone el repositorio con el siguiente comando: \emph{git clone git@github.com:SSloan07/LBreckOut.git}.
+		\item Ingrese al directorio del proyecto: \emph{cd LBreckOut}.
+		\item Acceda al subdirectorio \emph{Square}: \emph{cd Square}.
+		\item Compile el código utilizando: \emph{JackCompiler}.
+		\item Diríjase al directorio donde tenga instalado \emph{Nand2Tetris}.
+		\item Ingrese a las carpetas correspondientes: \emph{cd Nand2Tetris/nand2tetris/tools}.
+		\item Ejecute el emulador de la máquina virtual: \emph{bash VMEmulator.sh}.
+	\end{enumerate}
+	
+	Una vez abierto el \emph{VMEmulator}, seleccione la ruta donde clonó el repositorio y cargue el archivo \emph{Square.vm}.  
+	Finalmente, ejecute el programa con la opción \emph{No animation} ¡y disfrute del juego!
 	
 	\section{Sobre el juego}
 	Como se dijo en la introducción, en esta oportunidad nos propusimos la creación del clásico juego retro \emph{LBreakOut2} donde tenemos una plataforma que se mueve, de izquierda a derecha (o viceversa) por medio de las teclas $\leftarrow$, $\rightarrow$. Además tenemos cierto número de obstáculos, en el caso particular de nosotros, 4 filas y 8 columnas de rectángulos, que tenemos que destruir sin que la pelota se escape por la parte inferior de la pantalla. Por otra parte, tenemos un sistema de vidas, donde solo se pierde si se te escapa la pelota 3 veces (cada vez que pierdas una vida, aparecerá un contador con una vida menos) y se gana si destruyes todos los obstáculos.
